@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#f4f6f9;
+}
+
+header{
+    background:#003366;
+    color:white;
+    padding:20px;
+    text-align:center;
+}
+
+header h1{
+    margin-bottom:5px;
+}
+
+.contenedor{
+    display:flex;
+    min-height:100vh;
+}
+
+aside{
+    width:230px;
+    background:#1f2937;
+    color:white;
+    padding:20px;
+}
+
+aside h2{
+    margin-bottom:20px;
+}
+
+aside ul{
+    list-style:none;
+}
+
+aside li{
+    padding:15px;
+    border-radius:5px;
+    margin-bottom:8px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+aside li:hover{
+    background:#374151;
+}
+
+.activo{
+    background:#2563eb;
+}
+
+main{
+    flex:1;
+    padding:30px;
+}
+
+main h2{
+    margin-bottom:20px;
+    color:#003366;
+}
+
+.formulario{
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0px 2px 8px rgba(0,0,0,.15);
+    margin-bottom:30px;
+
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+}
+
+.formulario input{
+    padding:10px;
+    border:1px solid #ccc;
+    border-radius:5px;
+    font-size:15px;
+}
+
+.formulario button{
+    background:#0d6efd;
+    color:white;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+    font-size:16px;
+    padding:12px;
+    transition:.3s;
+}
+
+.formulario button:hover{
+    background:#084298;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+    box-shadow:0px 2px 8px rgba(0,0,0,.15);
+}
+
+th{
+    background:#003366;
+    color:white;
+    padding:15px;
+}
+
+td{
+    text-align:center;
+    padding:12px;
+    border-bottom:1px solid #ddd;
+}
+
+tr:hover{
+    background:#f1f1f1;
+}
+
+.Aprobado{
+    color:green;
+    font-weight:bold;
+}
+
+.Desaprobado{
+    color:red;
+    font-weight:bold;
+}
+
+.btnEliminar{
+    background:#dc3545;
+    color:white;
+    border:none;
+    padding:8px 12px;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+.btnEliminar:hover{
+    background:#bb2d3b;
+}
+</style>
+     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Sistema de Calificaciones</title>
+
+    <link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+</head>
+
+<body>
+
+        <header>
+
+        <h1>Universidad Tecnologica Nacional</h1>
+        <p>Sistema Academico</p>
+
+    </header>
+
+    <div class="contenedor">     
+
+        <aside>
+
+            <h2>Menu</h2>
+
+            <ul>
+
+                <li>Inicio</li>    
+
+                <li>Materias</li>
+
+                <li class="activo">Calificaciones</li>
+
+            </ul>
+
+        </aside>
+
+        <main>
+
+            <h2>Gestion de Calificaciones</h2>
+
+            <div class="formulario">
+
+                <select id="alumno">
+
+</select>
+
+<select id="materia">
+
+</select>
+
+                <input
+                    type="number"
+                    id="nota"
+                    placeholder="Nota">
+
+                <input
+                    type="date"
+                    id="fecha">
+
+                <button onclick="agregarCalificacion()">
+
+                    Guardar
+
+                </button>
+
+            </div>
+
+
+            <h2>Listado de Calificaciones</h2>
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Alumno</th>
+
+                        <th>Materia</th>
+
+                        <th>Nota</th>
+
+                        <th>Estado</th>
+
+                        <th>Fecha</th>
+
+                        <th>Acciones</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="tablaCalificaciones">
+
+                </tbody>
+
+            </table>
+
+        </main>
+
+    </div>
+
+    <script src="script.js"></script>
+
+<script>
+
+const URL = "http://localhost:3000";
+
+let estudiantes = [];
+let materias = [];
+let calificaciones = [];
+
+async function agregarCalificacion(){
+
+    let estudianteId = parseInt(document.getElementById("alumno").value);
+    let materiaId = parseInt(document.getElementById("materia").value);
+    let nota = parseFloat(document.getElementById("nota").value);
+    let fecha = document.getElementById("fecha").value;
+
+    if(isNaN(estudianteId) || isNaN(materiaId) || isNaN(nota) || fecha==""){
+
+        alert("Complete todos los campos");
+
+        return;
+
+    }
+
+    await axios.post(URL + "/calificaciones",{
+
+        estudianteId: estudianteId,
+        materiaId: materiaId,
+        nota: nota,
+        fecha: fecha
+
+    });
+
+    const response = await axios.get(URL + "/calificaciones");
+
+    calificaciones = response.data;
+
+    limpiarFormulario();
+
+    mostrarCalificaciones();
+
+}
+
+function mostrarCalificaciones(){
+
+    let tabla = document.getElementById("tablaCalificaciones");
+
+    tabla.innerHTML = "";
+
+    calificaciones.forEach(calificacion=>{
+
+        let estudiante = estudiantes.find(
+            e => e.id == calificacion.estudianteId
+        );
+
+        let materia = materias.find(
+            m => m.id == calificacion.materiaId
+        );
+
+        let estado = "";
+        let clase = "";
+
+        if(calificacion.nota >= 6){
+
+            estado = "Aprobado";
+            clase = "Aprobado";
+
+        }else{
+
+            estado = "Desaprobado";
+            clase = "Desaprobado";
+
+        }
+
+        tabla.innerHTML += `
+
+        <tr>
+
+            <td>${estudiante.nombre}</td>
+
+            <td>${materia.nombre}</td>
+
+            <td>${calificacion.nota}</td>
+
+            <td class="${clase}">
+                ${estado}
+            </td>
+
+            <td>${formatearFecha(calificacion.fecha)}</td>
+
+            <td>
+
+    <button
+    onclick="editarCalificacion(${calificacion.id})">
+
+    Editar
+
+    </button>
+
+    <button
+    class="btnEliminar"
+    onclick="eliminarCalificacion(${calificacion.id})">
+
+    Eliminar
+
+    </button>
+
+</td>
+
+        </tr>
+
+        `;
+
+    });
+
+}
+
+function formatearFecha(fecha){
+
+    return new Date(fecha).toLocaleDateString("es-AR");
+
+}
+
+function limpiarFormulario(){
+
+    document.getElementById("alumno").value="";
+    document.getElementById("materia").value="";
+    document.getElementById("nota").value="";
+    document.getElementById("fecha").value="";
+
+}
+
+async function cargarDatos(){
+
+    const responseEstudiantes =
+        await axios.get(URL + "/estudiantes");
+
+    estudiantes = responseEstudiantes.data;
+
+    const responseMaterias =
+        await axios.get(URL + "/materias");
+
+    materias = responseMaterias.data;
+
+    const responseCalificaciones =
+        await axios.get(URL + "/calificaciones");
+
+    calificaciones = responseCalificaciones.data;
+
+    cargarSelects();
+
+    mostrarCalificaciones();
+
+}
+
+cargarDatos();
+
+function cargarSelects(){
+
+    const selectAlumno =
+        document.getElementById("alumno");
+
+    const selectMateria =
+        document.getElementById("materia");
+
+    selectAlumno.innerHTML =
+        '<option value="">Seleccione un alumno</option>';
+
+    estudiantes.forEach(estudiante=>{
+
+        selectAlumno.innerHTML +=
+        `<option value="${estudiante.id}">
+            ${estudiante.nombre}
+        </option>`;
+
+    });
+
+    selectMateria.innerHTML =
+        '<option value="">Seleccione una materia</option>';
+
+    materias.forEach(materia=>{
+
+        selectMateria.innerHTML +=
+        `<option value="${materia.id}">
+            ${materia.nombre}
+        </option>`;
+
+    });
+
+}
+
+mostrarCalificaciones();
+
+async function eliminarCalificacion(id){
+
+    let confirmar = confirm("¿Desea eliminar esta calificación?");
+
+    if(!confirmar){
+        return;
+    }
+
+    await axios.delete(URL + "/calificaciones/" + id);
+
+    const response = await axios.get(URL + "/calificaciones");
+
+    calificaciones = response.data;
+
+    mostrarCalificaciones();
+
+}
+async function editarCalificacion(id){
+
+    let calificacion = calificaciones.find(c => c.id == id);
+
+    let nuevaNota = prompt(
+        "Ingrese la nueva nota:",
+        calificacion.nota
+    );
+
+    if(nuevaNota == null){
+        return;
+    }
+
+    let nuevaFecha = prompt(
+        "Ingrese la nueva fecha (AAAA-MM-DD):",
+        calificacion.fecha
+    );
+
+    if(nuevaFecha == null){
+        return;
+    }
+
+    await axios.patch(
+        URL + "/calificaciones/" + id,
+        {
+            nota: parseFloat(nuevaNota),
+            fecha: nuevaFecha
+        }
+    );
+
+    const response = await axios.get(URL + "/calificaciones");
+
+    calificaciones = response.data;
+
+    mostrarCalificaciones();
+
+}
+
+</script>
+
+</body>
+
+</html>
+
