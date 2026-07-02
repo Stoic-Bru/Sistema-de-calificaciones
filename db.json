@@ -1,0 +1,12 @@
+{
+  "materias": [
+    {
+      "nombre": "mate",
+      "docente": "mauri",
+      "notaMinima": 6,
+      "id": "YmBECQmdw2Q"
+    }
+  ],
+  "calificaciones": [],
+  "$schema": "./node_modules/json-server/schema.json"
+}
