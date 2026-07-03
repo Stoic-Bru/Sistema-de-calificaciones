@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #003366;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .contenedor {
+      display: flex;
+      min-height: 80vh;
+    }
+
+    aside {
+      width: 200px;
+      background-color: #f2f2f2;
+      padding: 20px;
+    }
+
+    aside ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    aside li {
+      margin-bottom: 15px;
+      cursor: pointer;
+      color: #003366;
+    }
+
+    aside li.activo {
+      font-weight: bold;
+      text-decoration: underline;
+    }
+
+    main {
+      flex-grow: 1;
+      padding: 20px;
+    }
+
+    /* Estilos para tu CRUD de Estudiantes */
+    .formulario {
+      margin-bottom: 30px;
+      padding: 15px;
+      background: #e9ecef;
+      border-radius: 5px;
+    }
+
+    .formulario input,
+    .formulario select,
+    .formulario button {
+      padding: 8px;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+
+    .formulario button {
+      background-color: #003366;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* Estilos para las Tarjetas de Estudiantes (Requisito del PDF) */
+    .contenedor-tarjetas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .tarjeta-estudiante {
+      border: 1px solid #ccc;
+      padding: 15px;
+      border-radius: 5px;
+      width: 250px;
+      background: #f9f9f9;
+    }
+
+    .tarjeta-estudiante h3 {
+      margin-top: 0;
+      color: #003366;
+    }
+
+    .btn-eliminar {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+      border-radius: 3px;
+    }
+
+    .btn-editar {
+      background-color: #ffc107;
+      color: black;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+      border-radius: 3px;
+    }
+
+    .seccion {
+      display: none;
+    }
+
+    .seccion.activa {
+      display: block;
+    }
+  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Sistema de Calificaciones</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+  <header>
+    <h1>Universidad Tecnológica Nacional</h1>
+    <h1>Facultad Regional Tucuman</h1>
+    <p>Sistema Académico</p>
+  </header>
+
+  <div class="contenedor">
+    <!-- Menú -->
+    <aside>
+      <h2>Menú</h2>
+      <ul>
+        <li class="activo" onclick="cambiarSeccion('seccion-estudiantes')">
+          Estudiantes
+        </li>
+        <li onclick="cambiarSeccion('seccion-materias')">Materias</li>
+        <li onclick="cambiarSeccion('seccion-calificaciones')">
+          Calificaciones
+        </li>
+      </ul>
+    </aside>
+
+    <main>
+      <section id="seccion-estudiantes" class="seccion activa">
+
+        <!-- 1. Agregamos el ID al h2 para poder cambiarlo después -->
+        <h2 id="titulo-formulario">Gestión de Estudiantes</h2>
+
+        <div class="formulario">
+          <input type="hidden" id="estudiante-id">
+          <input type="text" id="nombre" placeholder="Nombre completo" />
+          <input type="number" id="dni" placeholder="DNI" min="0" />
+          <input type="number" id="anio" placeholder="Año de cursado" min="0" />
+          <select id="turno">
+            <option value="">Seleccione Turno</option>
+            <option value="mañana">Mañana</option>
+            <option value="tarde">Tarde</option>
+            <option value="noche">Noche</option>
+          </select>
+
+          <!-- 2. Agregamos un ID al botón de guardar -->
+          <button id="btn-accion" onclick="guardarEstudiante()">Guardar Estudiante</button>
+
+          <!-- 3. Agregamos el botón de cancelar oculto por defecto -->
+          <button id="btn-cancelar" onclick="cancelarEdicion()" style="display:none;">Cancelar</button>
+        </div>
+
+        <h2>Listado de Estudiantes</h2>
+        <div id="contenedorTarjetas" class="contenedor-tarjetas"></div>
+
+      </section>
+    </main>
+  </div>
+
+  <script>
+    axios.defaults.baseURL = "http://localhost:3000";
+
+    // 2. Función para LEER los estudiantes y dibujarlos
+    const obtenerEstudiantes = async () => {
+      try {
+        // Pedimos los datos a json-server usando Axios (como pide el PDF)
+        const respuesta = await axios.get("/estudiantes");
+        const datos = respuesta.data;
+
+        // Buscamos el div vacío que tenés en tu HTML (asegurate de que el ID coincida, yo le puse "contenedorTarjetas")
+        const contenedor = document.getElementById("contenedorTarjetas");
+
+
+        // Lo limpiamos por si tenía algo antes
+        contenedor.innerHTML = "";
+
+        // Usamos el bucle forEach para recorrer los datos
+        datos.forEach((estudiante) => {
+          // 1. Creamos el contenedor de la tarjeta
+          const tarjeta = document.createElement("div");
+          tarjeta.className = "tarjeta-estudiante";
+
+          // 2. Creamos los elementos y asignamos el texto (aquí es donde es SEGURO)
+          const nombre = document.createElement("h3");
+          nombre.textContent = estudiante.nombre; // Si alguien escribe <script>, se verá como texto literal
+
+          const pDni = document.createElement("p");
+          pDni.textContent = `DNI: ${estudiante.dni}`;
+
+          const pAnio = document.createElement("p");
+          pAnio.textContent = `Año: ${estudiante.anio}`;
+
+          const pTurno = document.createElement("p");
+          pTurno.textContent = `Turno: ${estudiante.turno}`;
+
+          // 3. Creamos el contenedor de botones (aquí usamos innerHTML solo para los botones)
+          const divBotones = document.createElement("div");
+          divBotones.innerHTML = `
+        <button class="btn-editar" onclick="editarEstudiante('${estudiante.id}', '${estudiante.nombre}', '${estudiante.dni}', ${estudiante.anio}, '${estudiante.turno}')">Editar</button>
+        <button class="btn-eliminar" onclick="eliminarEstudiante('${estudiante.id}')">Eliminar</button>
+    `;
+
+          // 4. Juntamos todo en la tarjeta
+          tarjeta.appendChild(nombre);
+          tarjeta.appendChild(pDni);
+          tarjeta.appendChild(pAnio);
+          tarjeta.appendChild(pTurno);
+          tarjeta.appendChild(divBotones);
+
+          // 5. Metemos la tarjeta terminada al contenedor principal
+          contenedor.appendChild(tarjeta);
+        });
+
+      } catch (error) {
+        // La verificación que enseñó el profe, adaptada a Axios
+        console.log("Ups! hubo un error: " + error.message);
+        alert("No se pudieron cargar los estudiantes. ¿Está prendido el servidor?");
+      }
+    };
+    const editarEstudiante = (id, nombre, dni, anio, turno) => {
+      // 1. Llenamos el formulario
+      document.getElementById("estudiante-id").value = id;
+      document.getElementById("nombre").value = nombre;
+      document.getElementById("dni").value = dni;
+      document.getElementById("anio").value = anio;
+      document.getElementById("turno").value = turno;
+
+      // 2. Transformamos el formulario para que se vea que estamos editando
+      document.getElementById("titulo-formulario").textContent = "Editando estudiante";
+      document.getElementById("btn-accion").textContent = "Guardar Cambios";
+      document.getElementById("btn-cancelar").style.display = "inline-block"; // Mostramos el botón cancelar
+    };
+    const cancelarEdicion = () => {
+      document.getElementById("estudiante-id").value = "";
+      document.getElementById("nombre").value = "";
+      document.getElementById("dni").value = "";
+      document.getElementById("anio").value = "";
+      document.getElementById("turno").value = "";
+
+      document.getElementById("titulo-formulario").textContent = "Agregar Estudiante";
+      document.getElementById("btn-accion").textContent = "Guardar Estudiante";
+      document.getElementById("btn-cancelar").style.display = "none";
+    };
+    const guardarEstudiante = async () => {
+      // 1. Capturar valores
+      const id = document.getElementById("estudiante-id").value;
+      const nombre = document.getElementById("nombre").value.trim(); // .trim() quita espacios vacíos
+      const dni = document.getElementById("dni").value;
+      const anio = document.getElementById("anio").value;
+      const turno = document.getElementById("turno").value;
+
+      const tieneNumeros = /\d/.test(nombre);
+      // 2. Validación de campos vacíos
+      if (nombre === "" || dni === "" || anio === "" || turno === "") {
+        alert("¡Error! Debes completar todos los campos.");
+        return;
+      }
+
+      if (tieneNumeros) {
+        alert("¡Error! El nombre no puede contener números.");
+        return;
+      }
+
+      if (Number(dni) < 0 || Number(anio) < 0) {
+        alert("¡Error! Los números no pueden ser negativos.");
+        return;
+      }
+
+      const datosEstudiante = { nombre, dni, anio: Number(anio), turno };
+
+      try {
+        if (id) {
+          await axios.patch(`/estudiantes/${id}`, datosEstudiante);
+        } else {
+          await axios.post("/estudiantes", datosEstudiante);
+        }
+
+        // Limpiamos y reseteamos el formulario al estado original
+        cancelarEdicion();
+        await obtenerEstudiantes();
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Hubo un error al guardar. Verifica que el servidor esté encendido.");
+      }
+    };
+    const eliminarEstudiante = async (id) => {
+      // 1. Pedimos confirmación al usuario antes de borrar
+      const confirmar = confirm("¿Estás seguro de que querés eliminar a este estudiante? Esta acción no se puede deshacer.");
+
+      if (!confirmar) {
+        return; // Si el usuario pone "Cancelar", no hacemos nada.
+      }
+
+      try {
+        // 2. Enviamos la petición DELETE al servidor
+        await axios.delete(`/estudiantes/${id}`);
+
+        // 3. Si todo salió bien, avisamos y refrescamos la lista
+        alert("Estudiante eliminado correctamente.");
+        await obtenerEstudiantes(); // Recargamos las tarjetas
+
+      } catch (error) {
+        console.error("Error al eliminar:", error);
+        alert("Ups, hubo un problema al intentar eliminar al estudiante.");
+      }
+    };
+    // 3. Le decimos al navegador que ejecute esta función apenas termine de cargar la página
+    document.addEventListener("DOMContentLoaded", obtenerEstudiantes);
+  </script>
+</body>
+
+</html>
+
+<!-- Abrir servidor json-server con el siguiente comando:
+json-server -watch db.json -port 3000
+o
+json-server db.json -p 3000
+dependiendo de que versión de json-server tengas instalada.
+-->
