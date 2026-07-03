@@ -1,38 +1,79 @@
 {
-  "materias": [
-    {
-      "nombre": "mate",
-      "docente": "mauri",
-      "notaMinima": 6,
-      "id": "YmBECQmdw2Q"
-    }
-  ],
-  "calificaciones": [],
-
   "estudiantes": [
     {
       "id": "1",
-      "nombre": "María González",
+      "nombre": "Bruno Bon",
       "dni": "40123456",
-      "anio": 3,
-      "turno": "mañana"
+      "turno": "noche",
+      "anio": 3
+    },
+    {
+      "nombre": "jaja",
+      "dni": "12135645",
+      "anio": 2,
+      "turno": "mañana",
+      "id": "Ch8oTKPzRE8"
     }
   ],
   "materias": [
     {
       "id": "1",
-      "nombre": "Matemática",
-      "docente": "Prof. Ramírez",
+      "nombre": "Matematica",
+      "docente": "Prof. Ramirez",
+      "notaMinima": 6
+    },
+    {
+      "id": "2",
+      "nombre": "Programacion",
+      "docente": "Prof. Garcia",
       "notaMinima": 6
     }
   ],
   "calificaciones": [
     {
       "id": "1",
-      "estudianteId": 1,
-      "materiaId": 1,
+      "estudianteId": "1",
+      "materiaId": "1",
       "nota": 8,
       "fecha": "2025-07-10"
+    },
+    {
+      "id": "2",
+      "estudianteId": "1",
+      "materiaId": "1",
+      "nota": 7,
+      "fecha": "2025-08-12"
+    },
+    {
+      "id": "3",
+      "estudianteId": "Ch8oTKPzRE8",
+      "materiaId": "2",
+      "nota": 5,
+      "fecha": "2025-08-18"
+    },
+    {
+      "estudianteId": "1",
+      "materiaId": "2",
+      "nota": 1,
+      "fecha": "2026-06-30",
+      "id": "qxz67XRFbSE"
+    }
+  ],
+  "inscripciones": [
+    {
+      "id": "1",
+      "estudianteId": "1",
+      "materiaId": "1"
+    },
+    {
+      "id": "2",
+      "estudianteId": "Ch8oTKPzRE8",
+      "materiaId": "2"
+    },
+    {
+      "estudianteId": "1",
+      "materiaId": "2",
+      "id": "6spo6iYK-jA"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
