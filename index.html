@@ -1,512 +1,916 @@
-<<<<<<< HEAD
+
 <!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Materias · Sistema Académico</title>
+<style>
+
+:root {
+  --azul-header: #003366;
+  --gris-sidebar: #1f2937;
+  --azul-activo: #2563eb;
+  --azul-boton: #0d6efd;
+  --amarillo: #ffc107;
+  --rojo: #dc3545;
+  --fondo: #f4f6f9;
+  --blanco: #fff;
+  --texto: #212529;
+  --texto-suave: #6c757d;
+  --borde: #e2e6ea;
+  --radio: 10px;
+  --sombra: 0 2px 10px rgba(0,0,0,.08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: var(--fondo);
+  color: var(--texto);
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header-top {
+  background: var(--azul-header);
+  color: #fff;
+  padding: 16px 28px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: var(--sombra);
+}
+
+.header-top__texto h1 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.header-top__texto p {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: #cfe0f5;
+}
+
+.layout {
+  flex: 1;
+  display: flex;
+}
+
+.sidebar {
+  width: 230px;
+  background: var(--gris-sidebar);
+  padding: 20px 0;
+}
+
+.sidebar ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar li {
+  color: #d1d5db;
+  padding: 13px 24px;
+  font-size: 14px;
+  border-left: 4px solid transparent;
+}
+
+.sidebar li.activo {
+  background: var(--azul-activo);
+  color: #fff;
+  border-left-color: #fff;
+  font-weight: 600;
+}
+
+.main-content {
+  flex: 1;
+  padding: 28px 32px;
+}
+
+.main-content h2 {
+  margin: 0 0 20px;
+}
+
+.card {
+  background: var(--blanco);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.card h3 {
+  margin: 0 0 18px;
+  font-size: 16px;
+}
+
+.form__fila {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.campo {
+  flex: 1;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--texto-suave);
+}
+
+.campo--chico {
+  flex: 0 0 140px;
+}
+
+.campo input {
+  font-size: 14px;
+  padding: 10px 12px;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  background: var(--fondo);
+  outline: none;
+}
+
+.campo input:focus {
+  border-color: var(--azul-boton);
+  background: var(--blanco);
+}
+
+.form__error {
+  background: rgba(220,53,69,.08);
+  color: var(--rojo);
+  font-size: 13px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin: 16px 0 0;
+}
+
+.form__acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn {
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.btn--primario {
+  background: var(--azul-boton);
+  color: #fff;
+}
+
+.btn--secundario {
+  background: var(--fondo);
+  color: var(--texto-suave);
+  border: 1px solid var(--borde);
+}
+
+.btn--editar {
+  background: var(--amarillo);
+  color: #212529;
+  padding: 7px 14px;
+  font-size: 13px;
+}
+
+.btn--eliminar {
+  background: var(--rojo);
+  color: #fff;
+  padding: 7px 14px;
+  font-size: 13px;
+}
+
+.acciones-celda {
+  display: flex;
+  gap: 8px;
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.tabla th {
+  text-align: left;
+  background: var(--fondo);
+  color: var(--texto-suave);
+  font-size: 12px;
+  text-transform: uppercase;
+  padding: 12px 14px;
+  border-bottom: 2px solid var(--borde);
+}
+
+.tabla td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--borde);
+}
+
+.estado {
+  font-size: 14px;
+  color: var(--texto-suave);
+  padding: 14px;
+  text-align: center;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 50;
+}
+
+.modal-overlay[hidden] {
+  display: none;
+}
+
+.modal {
+  background: var(--blanco);
+  border-radius: var(--radio);
+  width: 100%;
+  max-width: 400px;
+  padding: 26px;
+  box-shadow: 0 20px 50px rgba(0,0,0,.25);
+}
+
+.modal h3 {
+  margin: 0 0 12px;
+}
+
+.modal p {
+  font-size: 14px;
+  color: var(--texto-suave);
+  margin: 0 0 20px;
+}
+
+.modal__acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+@media (max-width: 800px) {
+  .layout {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+  }
+  .sidebar ul {
+    display: flex;
+    overflow-x: auto;
+  }
+  .main-content {
+    padding: 20px;
+  }
+  .form__fila {
+    flex-direction: column;
+  }
+}
+
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <header class="header-top">
+    <div class="header-top__texto">
+      <h1>Universidad Tecnologica Nacional</h1>
+      <p>Sistema Academico</p>
+    </div>
+  </header>
+
+  <div class="layout">
+
+    <aside class="sidebar">
+      <ul>
+        <li> Inicio</li>
+        <li> Estudiantes</li>
+        <li class="activo"> Materias</li>
+        <li> Calificaciones</li>
+      </ul>
+    </aside>
+
+    <main class="main-content">
+      <h2>Materias</h2>
+
+      <section class="card">
+        <h3 id="formTitulo">Nueva materia</h3>
+
+        <form id="formMateria">
+          <input type="hidden" id="materiaId" />
+
+          <div class="form__fila">
+            <label class="campo">
+              <span>Nombre de la materia</span>
+              <input type="text" id="nombre" placeholder="Ej: Matemática" required />
+            </label>
+
+            <label class="campo">
+              <span>Docente</span>
+              <input type="text" id="docente" placeholder="Ej: Prof. Ramírez" required />
+            </label>
+
+            <label class="campo campo--chico">
+              <span>Nota mínima</span>
+              <input type="number" id="notaMinima" min="0" max="10" placeholder="6" required />
+            </label>
+          </div>
+
+          <p id="formError" class="form__error" hidden></p>
+
+          <div class="form__acciones">
+            <button type="button" id="btnCancelar" class="btn btn--secundario" hidden>Cancelar edición</button>
+            <button type="submit" id="btnGuardar" class="btn btn--primario">Guardar Materia</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="card">
+        <p id="estado" class="estado" hidden></p>
+
+        <table class="tabla">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Materia</th>
+              <th>Docente</th>
+              <th>Nota mínima</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="listaMaterias"></tbody>
+        </table>
+      </section>
+    </main>
+
+  </div>
+</div>
+
+<div id="modalEliminar" class="modal-overlay" hidden>
+  <div class="modal">
+    <h3>Eliminar materia</h3>
+    <p id="mensajeEliminar"></p>
+    <div class="modal__acciones">
+      <button type="button" id="btnCancelarEliminar" class="btn btn--secundario">Cancelar</button>
+      <button type="button" id="btnConfirmarEliminar" class="btn btn--eliminar">Sí, eliminar</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+
+const API = "http://localhost:3000/materias";
+const API_CAL = "http://localhost:3000/calificaciones";
+
+const lista = document.getElementById("listaMaterias");
+const estado = document.getElementById("estado");
+const form = document.getElementById("formMateria");
+const formError = document.getElementById("formError");
+const formTitulo = document.getElementById("formTitulo");
+const btnGuardar = document.getElementById("btnGuardar");
+const btnCancelar = document.getElementById("btnCancelar");
+
+const idInput = document.getElementById("materiaId");
+const nombreInput = document.getElementById("nombre");
+const docenteInput = document.getElementById("docente");
+const notaInput = document.getElementById("notaMinima");
+
+const modalEliminar = document.getElementById("modalEliminar");
+const mensajeEliminar = document.getElementById("mensajeEliminar");
+const btnCancelarEliminar = document.getElementById("btnCancelarEliminar");
+const btnConfirmarEliminar = document.getElementById("btnConfirmarEliminar");
+let idAEliminar = null;
+
+
+function mostrarEstado(msg) {
+  estado.textContent = msg;
+  estado.hidden = false;
+}
+
+function ocultarEstado() {
+  estado.hidden = true;
+}
+
+
+async function cargarMaterias() {
+  try {
+    mostrarEstado("Cargando materias...");
+    const { data } = await axios.get(API);
+
+    if (data.length === 0) {
+      mostrarEstado("No hay materias cargadas.");
+      lista.innerHTML = "";
+      return;
+    }
+
+    ocultarEstado();
+    renderizarMaterias(data);
+  } catch {
+    mostrarEstado("No se pudieron cargar las materias. Verificá json-server en el puerto 3000.");
+  }
+}
+
+function renderizarMaterias(materias) {
+  lista.innerHTML = "";
+
+  materias.forEach((m) => {
+    const fila = document.createElement("tr");
+    fila.innerHTML = `
+      <td>${m.id}</td>
+      <td>${m.nombre}</td>
+      <td>${m.docente}</td>
+      <td>${m.notaMinima}</td>
+      <td class="acciones-celda">
+        <button class="btn btn--editar">Editar</button>
+        <button class="btn btn--eliminar">Eliminar</button>
+      </td>`;
+
+    fila.querySelector(".btn--editar").addEventListener("click", () => cargarEdicion(m));
+    fila.querySelector(".btn--eliminar").addEventListener("click", () => pedirEliminacion(m));
+    lista.appendChild(fila);
+  });
+}
+
+
+function cargarEdicion(m) {
+  idInput.value = m.id;
+  nombreInput.value = m.nombre;
+  docenteInput.value = m.docente;
+  notaInput.value = m.notaMinima;
+  formTitulo.textContent = "Editar materia";
+  btnGuardar.textContent = "Guardar cambios";
+  btnCancelar.hidden = false;
+  formError.hidden = true;
+}
+
+function resetForm() {
+  form.reset();
+  idInput.value = "";
+  formTitulo.textContent = "Nueva materia";
+  btnGuardar.textContent = "Guardar Materia";
+  btnCancelar.hidden = true;
+  formError.hidden = true;
+}
+
+
+async function crearMateria(datos) {
+  try {
+    await axios.post(API, datos);
+    await cargarMaterias();
+    resetForm();
+  } catch {
+    formError.textContent = "No se pudo crear la materia.";
+    formError.hidden = false;
+  }
+}
+
+async function editarMateria(id, datos) {
+  try {
+    await axios.patch(`${API}/${id}`, datos);
+    await cargarMaterias();
+    resetForm();
+  } catch {
+    formError.textContent = "No se pudieron guardar los cambios.";
+    formError.hidden = false;
+  }
+}
+
+
+async function pedirEliminacion(m) {
+  idAEliminar = m.id;
+
+  try {
+    const { data } = await axios.get(`${API_CAL}?materiaId=${m.id}`);
+    mensajeEliminar.textContent = data.length > 0
+      ? `"${m.nombre}" tiene ${data.length} calificación(es) asociada(s). ¿Eliminar igual?`
+      : `¿Eliminar la materia "${m.nombre}"?`;
+  } catch {
+    mensajeEliminar.textContent = `No se pudo verificar calificaciones de "${m.nombre}". ¿Eliminar igual?`;
+  }
+
+  modalEliminar.hidden = false;
+}
+
+async function eliminarMateria(id) {
+  try {
+    await axios.delete(`${API}/${id}`);
+    await cargarMaterias();
+  } finally {
+    modalEliminar.hidden = true;
+    idAEliminar = null;
+  }
+}
+
+
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const nombre = nombreInput.value.trim();
+  const docente = docenteInput.value.trim();
+  const notaMinima = Number(notaInput.value);
+
+  if (!nombre || !docente || notaInput.value === "") {
+    formError.textContent = "Completá todos los campos.";
+    formError.hidden = false;
+    return;
+  }
+
+  if (notaMinima < 0 || notaMinima > 10) {
+    formError.textContent = "La nota mínima debe estar entre 0 y 10.";
+    formError.hidden = false;
+    return;
+  }
+
+  const datos = { nombre, docente, notaMinima };
+  idInput.value ? editarMateria(idInput.value, datos) : crearMateria(datos);
+});
+
+btnCancelar.addEventListener("click", resetForm);
+
+btnCancelarEliminar.addEventListener("click", () => {
+  modalEliminar.hidden = true;
+  idAEliminar = null;
+});
+
+btnConfirmarEliminar.addEventListener("click", () => idAEliminar && eliminarMateria(idAEliminar));
+
+
+cargarMaterias();
+
+</script>
+</body>
+</html>
+
+<!doctype html>
 <html lang="es">
 
 <head>
-<style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial, Helvetica, sans-serif;
-}
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
 
-body{
-    background:#f4f6f9;
-}
+    header {
+      background-color: #003366;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
 
-header{
-    background:#003366;
-    color:white;
-    padding:20px;
-    text-align:center;
-}
+    .contenedor {
+      display: flex;
+      min-height: 80vh;
+    }
 
-header h1{
-    margin-bottom:5px;
-}
+    aside {
+      width: 200px;
+      background-color: #f2f2f2;
+      padding: 20px;
+    }
 
-.contenedor{
-    display:flex;
-    min-height:100vh;
-}
+    aside ul {
+      list-style-type: none;
+      padding: 0;
+    }
 
-aside{
-    width:230px;
-    background:#1f2937;
-    color:white;
-    padding:20px;
-}
+    aside li {
+      margin-bottom: 15px;
+      cursor: pointer;
+      color: #003366;
+    }
 
-aside h2{
-    margin-bottom:20px;
-}
+    aside li.activo {
+      font-weight: bold;
+      text-decoration: underline;
+    }
 
-aside ul{
-    list-style:none;
-}
+    main {
+      flex-grow: 1;
+      padding: 20px;
+    }
 
-aside li{
-    padding:15px;
-    border-radius:5px;
-    margin-bottom:8px;
-    cursor:pointer;
-    transition:0.3s;
-}
+    /* Estilos para tu CRUD de Estudiantes */
+    .formulario {
+      margin-bottom: 30px;
+      padding: 15px;
+      background: #e9ecef;
+      border-radius: 5px;
+    }
 
-aside li:hover{
-    background:#374151;
-}
+    .formulario input,
+    .formulario select,
+    .formulario button {
+      padding: 8px;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
 
-.activo{
-    background:#2563eb;
-}
+    .formulario button {
+      background-color: #003366;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
 
-main{
-    flex:1;
-    padding:30px;
-}
+    /* Estilos para las Tarjetas de Estudiantes (Requisito del PDF) */
+    .contenedor-tarjetas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
 
-main h2{
-    margin-bottom:20px;
-    color:#003366;
-}
+    .tarjeta-estudiante {
+      border: 1px solid #ccc;
+      padding: 15px;
+      border-radius: 5px;
+      width: 250px;
+      background: #f9f9f9;
+    }
 
-.formulario{
-    background:white;
-    padding:20px;
-    border-radius:10px;
-    box-shadow:0px 2px 8px rgba(0,0,0,.15);
-    margin-bottom:30px;
+    .tarjeta-estudiante h3 {
+      margin-top: 0;
+      color: #003366;
+    }
 
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:15px;
-}
+    .btn-eliminar {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+      border-radius: 3px;
+    }
 
-.formulario input{
-    padding:10px;
-    border:1px solid #ccc;
-    border-radius:5px;
-    font-size:15px;
-}
+    .btn-editar {
+      background-color: #ffc107;
+      color: black;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+      border-radius: 3px;
+    }
 
-.formulario button{
-    background:#0d6efd;
-    color:white;
-    border:none;
-    border-radius:5px;
-    cursor:pointer;
-    font-size:16px;
-    padding:12px;
-    transition:.3s;
-}
+    .seccion {
+      display: none;
+    }
 
-.formulario button:hover{
-    background:#084298;
-}
+    .seccion.activa {
+      display: block;
+    }
+  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-table{
-    width:100%;
-    border-collapse:collapse;
-    background:white;
-    box-shadow:0px 2px 8px rgba(0,0,0,.15);
-}
+  <title>Sistema de Calificaciones</title>
 
-th{
-    background:#003366;
-    color:white;
-    padding:15px;
-}
-
-td{
-    text-align:center;
-    padding:12px;
-    border-bottom:1px solid #ddd;
-}
-
-tr:hover{
-    background:#f1f1f1;
-}
-
-.Aprobado{
-    color:green;
-    font-weight:bold;
-}
-
-.Desaprobado{
-    color:red;
-    font-weight:bold;
-}
-
-.btnEliminar{
-    background:#dc3545;
-    color:white;
-    border:none;
-    padding:8px 12px;
-    border-radius:5px;
-    cursor:pointer;
-}
-
-.btnEliminar:hover{
-    background:#bb2d3b;
-}
-</style>
-     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Sistema de Calificaciones</title>
-
-    <link rel="stylesheet" href="style.css">
-
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 
 <body>
+  <header>
+    <h1>Universidad Tecnológica Nacional</h1>
+    <h1>Facultad Regional Tucuman</h1>
+    <p>Sistema Académico</p>
+  </header>
 
-        <header>
+  <div class="contenedor">
+    <!-- Menú -->
+    <aside>
+      <h2>Menú</h2>
+      <ul>
+        <li class="activo" onclick="cambiarSeccion('seccion-estudiantes')">
+          Estudiantes
+        </li>
+        <li onclick="cambiarSeccion('seccion-materias')">Materias</li>
+        <li onclick="cambiarSeccion('seccion-calificaciones')">
+          Calificaciones
+        </li>
+      </ul>
+    </aside>
 
-        <h1>Universidad Tecnologica Nacional</h1>
-        <p>Sistema Academico</p>
+    <main>
+      <section id="seccion-estudiantes" class="seccion activa">
 
-    </header>
+        <!-- 1. Agregamos el ID al h2 para poder cambiarlo después -->
+        <h2 id="titulo-formulario">Gestión de Estudiantes</h2>
 
-    <div class="contenedor">     
+        <div class="formulario">
+          <input type="hidden" id="estudiante-id">
+          <input type="text" id="nombre" placeholder="Nombre completo" />
+          <input type="number" id="dni" placeholder="DNI" min="0" />
+          <input type="number" id="anio" placeholder="Año de cursado" min="0" />
+          <select id="turno">
+            <option value="">Seleccione Turno</option>
+            <option value="mañana">Mañana</option>
+            <option value="tarde">Tarde</option>
+            <option value="noche">Noche</option>
+          </select>
 
-        <aside>
+          <!-- 2. Agregamos un ID al botón de guardar -->
+          <button id="btn-accion" onclick="guardarEstudiante()">Guardar Estudiante</button>
 
-            <h2>Menu</h2>
+          <!-- 3. Agregamos el botón de cancelar oculto por defecto -->
+          <button id="btn-cancelar" onclick="cancelarEdicion()" style="display:none;">Cancelar</button>
+        </div>
 
-            <ul>
+        <h2>Listado de Estudiantes</h2>
+        <div id="contenedorTarjetas" class="contenedor-tarjetas"></div>
 
-                <li>Inicio</li>    
+      </section>
+    </main>
+  </div>
 
-                <li>Materias</li>
+  <script>
+    axios.defaults.baseURL = "http://localhost:3000";
 
-                <li class="activo">Calificaciones</li>
+    // 2. Función para LEER los estudiantes y dibujarlos
+    const obtenerEstudiantes = async () => {
+      try {
+        // Pedimos los datos a json-server usando Axios (como pide el PDF)
+        const respuesta = await axios.get("/estudiantes");
+        const datos = respuesta.data;
 
-            </ul>
-
-        </aside>
-
-        <main>
-
-            <h2>Gestion de Calificaciones</h2>
-
-            <div class="formulario">
-
-                <select id="alumno">
-
-</select>
-
-<select id="materia">
-
-</select>
-
-                <input
-                    type="number"
-                    id="nota"
-                    placeholder="Nota">
-
-                <input
-                    type="date"
-                    id="fecha">
-
-                <button onclick="agregarCalificacion()">
-
-                    Guardar
-
-                </button>
-
-            </div>
+        // Buscamos el div vacío que tenés en tu HTML (asegurate de que el ID coincida, yo le puse "contenedorTarjetas")
+        const contenedor = document.getElementById("contenedorTarjetas");
 
 
-            <h2>Listado de Calificaciones</h2>
+        // Lo limpiamos por si tenía algo antes
+        contenedor.innerHTML = "";
 
-            <table>
+        // Usamos el bucle forEach para recorrer los datos
+        datos.forEach((estudiante) => {
+          // 1. Creamos el contenedor de la tarjeta
+          const tarjeta = document.createElement("div");
+          tarjeta.className = "tarjeta-estudiante";
 
-                <thead>
+          // 2. Creamos los elementos y asignamos el texto (aquí es donde es SEGURO)
+          const nombre = document.createElement("h3");
+          nombre.textContent = estudiante.nombre; // Si alguien escribe <script>, se verá como texto literal
 
-                    <tr>
+          const pDni = document.createElement("p");
+          pDni.textContent = `DNI: ${estudiante.dni}`;
 
-                        <th>Alumno</th>
+          const pAnio = document.createElement("p");
+          pAnio.textContent = `Año: ${estudiante.anio}`;
 
-                        <th>Materia</th>
+          const pTurno = document.createElement("p");
+          pTurno.textContent = `Turno: ${estudiante.turno}`;
 
-                        <th>Nota</th>
+          // 3. Creamos el contenedor de botones (aquí usamos innerHTML solo para los botones)
+          const divBotones = document.createElement("div");
+          divBotones.innerHTML = `
+        <button class="btn-editar" onclick="editarEstudiante('${estudiante.id}', '${estudiante.nombre}', '${estudiante.dni}', ${estudiante.anio}, '${estudiante.turno}')">Editar</button>
+        <button class="btn-eliminar" onclick="eliminarEstudiante('${estudiante.id}')">Eliminar</button>
+    `;
 
-                        <th>Estado</th>
+          // 4. Juntamos todo en la tarjeta
+          tarjeta.appendChild(nombre);
+          tarjeta.appendChild(pDni);
+          tarjeta.appendChild(pAnio);
+          tarjeta.appendChild(pTurno);
+          tarjeta.appendChild(divBotones);
 
-                        <th>Fecha</th>
+          // 5. Metemos la tarjeta terminada al contenedor principal
+          contenedor.appendChild(tarjeta);
+        });
 
-                        <th>Acciones</th>
+      } catch (error) {
+        // La verificación que enseñó el profe, adaptada a Axios
+        console.log("Ups! hubo un error: " + error.message);
+        alert("No se pudieron cargar los estudiantes. ¿Está prendido el servidor?");
+      }
+    };
+    const editarEstudiante = (id, nombre, dni, anio, turno) => {
+      // 1. Llenamos el formulario
+      document.getElementById("estudiante-id").value = id;
+      document.getElementById("nombre").value = nombre;
+      document.getElementById("dni").value = dni;
+      document.getElementById("anio").value = anio;
+      document.getElementById("turno").value = turno;
 
-                    </tr>
+      // 2. Transformamos el formulario para que se vea que estamos editando
+      document.getElementById("titulo-formulario").textContent = "Editando estudiante";
+      document.getElementById("btn-accion").textContent = "Guardar Cambios";
+      document.getElementById("btn-cancelar").style.display = "inline-block"; // Mostramos el botón cancelar
+    };
+    const cancelarEdicion = () => {
+      document.getElementById("estudiante-id").value = "";
+      document.getElementById("nombre").value = "";
+      document.getElementById("dni").value = "";
+      document.getElementById("anio").value = "";
+      document.getElementById("turno").value = "";
 
-                </thead>
+      document.getElementById("titulo-formulario").textContent = "Agregar Estudiante";
+      document.getElementById("btn-accion").textContent = "Guardar Estudiante";
+      document.getElementById("btn-cancelar").style.display = "none";
+    };
+    const guardarEstudiante = async () => {
+      // 1. Capturar valores
+      const id = document.getElementById("estudiante-id").value;
+      const nombre = document.getElementById("nombre").value.trim(); // .trim() quita espacios vacíos
+      const dni = document.getElementById("dni").value;
+      const anio = document.getElementById("anio").value;
+      const turno = document.getElementById("turno").value;
 
-                <tbody id="tablaCalificaciones">
-
-                </tbody>
-
-            </table>
-
-        </main>
-
-    </div>
-
-    <script src="script.js"></script>
-
-<script>
-
-const URL = "http://localhost:3000";
-
-let estudiantes = [];
-let materias = [];
-let calificaciones = [];
-
-async function agregarCalificacion(){
-
-    let estudianteId = parseInt(document.getElementById("alumno").value);
-    let materiaId = parseInt(document.getElementById("materia").value);
-    let nota = parseFloat(document.getElementById("nota").value);
-    let fecha = document.getElementById("fecha").value;
-
-    if(isNaN(estudianteId) || isNaN(materiaId) || isNaN(nota) || fecha==""){
-
-        alert("Complete todos los campos");
-
+      const tieneNumeros = /\d/.test(nombre);
+      // 2. Validación de campos vacíos
+      if (nombre === "" || dni === "" || anio === "" || turno === "") {
+        alert("¡Error! Debes completar todos los campos.");
         return;
+      }
 
-    }
+      if (tieneNumeros) {
+        alert("¡Error! El nombre no puede contener números.");
+        return;
+      }
 
-    await axios.post(URL + "/calificaciones",{
+      if (Number(dni) < 0 || Number(anio) < 0) {
+        alert("¡Error! Los números no pueden ser negativos.");
+        return;
+      }
 
-        estudianteId: estudianteId,
-        materiaId: materiaId,
-        nota: nota,
-        fecha: fecha
+      const datosEstudiante = { nombre, dni, anio: Number(anio), turno };
 
-    });
-
-    const response = await axios.get(URL + "/calificaciones");
-
-    calificaciones = response.data;
-
-    limpiarFormulario();
-
-    mostrarCalificaciones();
-
-}
-
-function mostrarCalificaciones(){
-
-    let tabla = document.getElementById("tablaCalificaciones");
-
-    tabla.innerHTML = "";
-
-    calificaciones.forEach(calificacion=>{
-
-        let estudiante = estudiantes.find(
-            e => e.id == calificacion.estudianteId
-        );
-
-        let materia = materias.find(
-            m => m.id == calificacion.materiaId
-        );
-
-        let estado = "";
-        let clase = "";
-
-        if(calificacion.nota >= 6){
-
-            estado = "Aprobado";
-            clase = "Aprobado";
-
-        }else{
-
-            estado = "Desaprobado";
-            clase = "Desaprobado";
-
+      try {
+        if (id) {
+          await axios.patch(`/estudiantes/${id}`, datosEstudiante);
+        } else {
+          await axios.post("/estudiantes", datosEstudiante);
         }
 
-        tabla.innerHTML += `
-
-        <tr>
-
-            <td>${estudiante.nombre}</td>
-
-            <td>${materia.nombre}</td>
-
-            <td>${calificacion.nota}</td>
-
-            <td class="${clase}">
-                ${estado}
-            </td>
-
-            <td>${formatearFecha(calificacion.fecha)}</td>
-
-            <td>
-
-    <button
-    onclick="editarCalificacion(${calificacion.id})">
-
-    Editar
-
-    </button>
-
-    <button
-    class="btnEliminar"
-    onclick="eliminarCalificacion(${calificacion.id})">
-
-    Eliminar
-
-    </button>
-
-</td>
-
-        </tr>
-
-        `;
-
-    });
-
-}
-
-function formatearFecha(fecha){
-
-    return new Date(fecha).toLocaleDateString("es-AR");
-
-}
-
-function limpiarFormulario(){
-
-    document.getElementById("alumno").value="";
-    document.getElementById("materia").value="";
-    document.getElementById("nota").value="";
-    document.getElementById("fecha").value="";
-
-}
-
-async function cargarDatos(){
-
-    const responseEstudiantes =
-        await axios.get(URL + "/estudiantes");
-
-    estudiantes = responseEstudiantes.data;
-
-    const responseMaterias =
-        await axios.get(URL + "/materias");
-
-    materias = responseMaterias.data;
-
-    const responseCalificaciones =
-        await axios.get(URL + "/calificaciones");
-
-    calificaciones = responseCalificaciones.data;
-
-    cargarSelects();
-
-    mostrarCalificaciones();
-
-}
-
-cargarDatos();
-
-function cargarSelects(){
-
-    const selectAlumno =
-        document.getElementById("alumno");
-
-    const selectMateria =
-        document.getElementById("materia");
-
-    selectAlumno.innerHTML =
-        '<option value="">Seleccione un alumno</option>';
-
-    estudiantes.forEach(estudiante=>{
-
-        selectAlumno.innerHTML +=
-        `<option value="${estudiante.id}">
-            ${estudiante.nombre}
-        </option>`;
-
-    });
-
-    selectMateria.innerHTML =
-        '<option value="">Seleccione una materia</option>';
-
-    materias.forEach(materia=>{
-
-        selectMateria.innerHTML +=
-        `<option value="${materia.id}">
-            ${materia.nombre}
-        </option>`;
-
-    });
-
-}
-
-mostrarCalificaciones();
-
-async function eliminarCalificacion(id){
-
-    let confirmar = confirm("¿Desea eliminar esta calificación?");
-
-    if(!confirmar){
-        return;
-    }
-
-    await axios.delete(URL + "/calificaciones/" + id);
-
-    const response = await axios.get(URL + "/calificaciones");
-
-    calificaciones = response.data;
-
-    mostrarCalificaciones();
-
-}
-async function editarCalificacion(id){
-
-    let calificacion = calificaciones.find(c => c.id == id);
-
-    let nuevaNota = prompt(
-        "Ingrese la nueva nota:",
-        calificacion.nota
-    );
-
-    if(nuevaNota == null){
-        return;
-    }
-
-    let nuevaFecha = prompt(
-        "Ingrese la nueva fecha (AAAA-MM-DD):",
-        calificacion.fecha
-    );
-
-    if(nuevaFecha == null){
-        return;
-    }
-
-    await axios.patch(
-        URL + "/calificaciones/" + id,
-        {
-            nota: parseFloat(nuevaNota),
-            fecha: nuevaFecha
-        }
-    );
-
-    const response = await axios.get(URL + "/calificaciones");
-
-    calificaciones = response.data;
-
-    mostrarCalificaciones();
-
-}
-
-</script>
-
+        // Limpiamos y reseteamos el formulario al estado original
+        cancelarEdicion();
+        await obtenerEstudiantes();
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Hubo un error al guardar. Verifica que el servidor esté encendido.");
+      }
+    };
+    const eliminarEstudiante = async (id) => {
+      // 1. Pedimos confirmación al usuario antes de borrar
+      const confirmar = confirm("¿Estás seguro de que querés eliminar a este estudiante? Esta acción no se puede deshacer.");
+
+      if (!confirmar) {
+        return; // Si el usuario pone "Cancelar", no hacemos nada.
+      }
+
+      try {
+        // 2. Enviamos la petición DELETE al servidor
+        await axios.delete(`/estudiantes/${id}`);
+
+        // 3. Si todo salió bien, avisamos y refrescamos la lista
+        alert("Estudiante eliminado correctamente.");
+        await obtenerEstudiantes(); // Recargamos las tarjetas
+
+      } catch (error) {
+        console.error("Error al eliminar:", error);
+        alert("Ups, hubo un problema al intentar eliminar al estudiante.");
+      }
+    };
+    // 3. Le decimos al navegador que ejecute esta función apenas termine de cargar la página
+    document.addEventListener("DOMContentLoaded", obtenerEstudiantes);
+  </script>
 </body>
 
+<<<<<<< HEAD
 </html>
+=======
+</html>
+
+<!-- Abrir servidor json-server con el siguiente comando:
+json-server -watch db.json -port 3000
+o
+json-server db.json -p 3000
+dependiendo de que versión de json-server tengas instalada.
+-->
+
+>>>>>>> 12208f087b346e9a9157cc1321e0ae6cf3785598
